@@ -1,0 +1,37 @@
+services:
+  acestep-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: acestep-1.5-api:latest
+    container_name: acestep-api
+    ports:
+      - "8001:8001"
+    volumes:
+      # Persist models across container restarts
+      - model-cache:/app/ACE-Step-1.5/checkpoints
+      # Persist generated audio files
+      - ./outputs:/app/ACE-Step-1.5/.cache/acestep/tmp/api_audio
+    environment:
+      - ACESTEP_API_HOST=0.0.0.0
+      - ACESTEP_API_PORT=8001
+      - ACESTEP_INIT_LLM=auto
+      - DOWNLOAD_SOURCE=auto
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              device_ids: ['0']
+              capabilities: [gpu]
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 300s
+
+volumes:
+  model-cache:
+    driver: local
