@@ -244,28 +244,6 @@
                 </div>
             </div>
 
-            <!-- Progress Bar -->
-            <div class="queue-progress">
-                <div class="progress-labels">
-                    <span class="progress-text">Queue Progress</span>
-                    <span class="progress-count"
-                        >{queueController.queueSize} / {queueController.targetSize}</span
-                    >
-                </div>
-                <div class="progress-bar-track">
-                    <div
-                        class="progress-bar-fill"
-                        style="width: {(queueController.queueSize /
-                            queueController.targetSize) *
-                            100}%"
-                    ></div>
-                </div>
-                <p class="queue-details">
-                    {queueController.completedCount} ready to play · {queueController.addedCount}
-                    generating
-                </p>
-            </div>
-
             <!-- Controls -->
             <div class="queue-controls-row">
                 <div class="control-item">
@@ -685,55 +663,6 @@
     .status-badge.status-active {
         background: #d1fae5;
         color: #059669;
-    }
-
-    .queue-progress {
-        background: white;
-        border-radius: 12px;
-        padding: 1rem;
-        margin-bottom: 1rem;
-        border: 1px solid #e5e7eb;
-    }
-
-    .progress-labels {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 0.5rem;
-    }
-
-    .progress-text {
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: #374151;
-    }
-
-    .progress-count {
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: #1f2937;
-    }
-
-    .progress-bar-track {
-        height: 8px;
-        background: #e5e7eb;
-        border-radius: 9999px;
-        overflow: hidden;
-        margin-bottom: 0.75rem;
-    }
-
-    .progress-bar-fill {
-        height: 100%;
-        background: #4f46e5;
-        border-radius: 9999px;
-        transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    .queue-details {
-        margin: 0;
-        font-size: 0.75rem;
-        color: #6b7280;
-        text-align: center;
     }
 
     .queue-controls-row {
