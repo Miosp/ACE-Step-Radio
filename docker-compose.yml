@@ -32,34 +32,28 @@ services:
       retries: 3
       start_period: 300s
 
-  ollama:
-    image: ollama/ollama:latest
-    container_name: ollama
+  web:
+    build:
+      context: ./web
+      dockerfile: Dockerfile
+    image: acestep-radio-web:latest
+    container_name: acestep-radio-web
     ports:
-      - "11434:11434"
-    volumes:
-      # Persist Ollama models
-      - ollama-models:/root/.ollama
+      - "3000:3000"
     environment:
-      - OLLAMA_HOST=0.0.0.0
-      - OLLAMA_PORT=11434
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
+      - ACESTEP_SERVER_URL=http://acestep-api:8001
+      - ORIGIN=http://localhost:3000
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "curl -sSf http://localhost:11434/ || exit 1"]
+      test: ["CMD", "bun", "eval", "fetch('http://localhost:3000/').then(() => 0).catch(() => 1)"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 10s
+    depends_on:
+      acestep-api:
+        condition: service_healthy
 
 volumes:
   model-cache:
-    driver: local
-  ollama-models:
     driver: local
