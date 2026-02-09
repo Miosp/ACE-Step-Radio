@@ -4,7 +4,9 @@
 
 A fun little PoC web app that generates music using [ACE-Step-1.5](https://github.com/ACE-Step/ACE-Step-1.5) and plays it back like a radio. Uses SvelteKit + Bun + Containers.
 
-> This is just a side project/experiment, not production-ready code. Expect sub-optimal architecture and some hacky bits.
+When I heard the quality of music ACE-Step-1.5 can generate and witnessed the speed of generation, I thought it would be fun to build a little "radio" that continuously generates and plays music based on user prompts. This project is the result of that idea.
+
+> It came to be in more or less two evenings, so do not expect much. Mostly sub-optimal architecture and some hacky bits.
 
 The main idea is to have an automatically playing "radio" that generates songs based on user prompts. This is done by pre-fetching songs beforehand and queuing them up, so there's always something playing.
 
