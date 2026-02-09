@@ -22,6 +22,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     curl \
     ca-certificates \
+    gcc \
+    g++ \
     && rm -rf /var/lib/apt/lists/* \
     && ln -sf /usr/bin/python3.11 /usr/bin/python
 
@@ -36,7 +38,8 @@ WORKDIR /app
 COPY ACE-Step-1.5 /app/ACE-Step-1.5
 WORKDIR /app/ACE-Step-1.5
 
-RUN uv sync
+RUN uv sync; \
+    uv pip install /app/ACE-Step-1.5/acestep/third_parts/nano-vllm
 
 # Activate the virtual environment
 ENV PATH="/app/ACE-Step-1.5/.venv/bin:$PATH"

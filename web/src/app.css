@@ -1,0 +1,22 @@
+:root {
+    --app-font: "Arimo", sans-serif;
+}
+
+/* apply to all elements, pseudo-elements and form controls */
+*,
+*::before,
+*::after,
+html,
+body,
+button,
+input,
+select,
+textarea,
+optgroup,
+option,
+label,
+legend {
+    font-family: var(--app-font) !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}

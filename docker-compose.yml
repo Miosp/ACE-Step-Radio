@@ -15,7 +15,7 @@ services:
     environment:
       - ACESTEP_API_HOST=0.0.0.0
       - ACESTEP_API_PORT=8001
-      - ACESTEP_INIT_LLM=auto
+      - ACESTEP_INIT_LLM=true
       - DOWNLOAD_SOURCE=auto
     deploy:
       resources:

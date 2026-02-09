@@ -17,26 +17,37 @@ const requestSongSchema = v.object({
 	temperature: v.optional(v.number()),
 	cfg_scale: v.optional(v.number()),
 	seed: v.optional(v.number()),
-	model: v.optional(v.string())
+	model: v.optional(v.string()),
+	// Additional generation control parameters
+	batch_size: v.optional(v.number()),
+	inference_steps: v.optional(v.number()),
+	thinking: v.optional(v.boolean()),
+	use_format: v.optional(v.boolean()),
+	audio_format: v.optional(v.string()),
+	time_signature: v.optional(v.string()),
+	use_random_seed: v.optional(v.boolean()),
+	// LM parameters
+	lm_temperature: v.optional(v.number()),
+	lm_cfg_scale: v.optional(v.number()),
 });
 
 export type RequestSongResponse = {
 	code: number;
 	error: string | null;
 	timestamp: number;
-	extra: any | null;
+	extra: unknown;
 	data: {
 		task_id: string;
 		status: string;
 		queue_position: number;
-	}
-}
+	};
+};
 
 export const requestSong = command(requestSongSchema, async (params) => {
 	const api_url = getServerUrl();
 
 	// Build request body with only provided params
-	const body: Record<string, any> = {
+	const body: Record<string, string | number | boolean> = {
 		caption: params.caption,
 		duration: params.duration ?? 30
 	};
@@ -51,6 +62,15 @@ export const requestSong = command(requestSongSchema, async (params) => {
 	if (params.cfg_scale !== undefined) body.cfg_scale = params.cfg_scale;
 	if (params.seed !== undefined) body.seed = params.seed;
 	if (params.model) body.model = params.model;
+	if (params.batch_size !== undefined) body.batch_size = params.batch_size;
+	if (params.inference_steps !== undefined) body.inference_steps = params.inference_steps;
+	if (params.thinking !== undefined) body.thinking = params.thinking;
+	if (params.use_format !== undefined) body.use_format = params.use_format;
+	if (params.audio_format) body.audio_format = params.audio_format;
+	if (params.time_signature) body.time_signature = params.time_signature;
+	if (params.use_random_seed !== undefined) body.use_random_seed = params.use_random_seed;
+	if (params.lm_temperature !== undefined) body.lm_temperature = params.lm_temperature;
+	if (params.lm_cfg_scale !== undefined) body.lm_cfg_scale = params.lm_cfg_scale;
 
 	// Create task
 	const createRes = await fetch(`${api_url}/release_task`, {
@@ -58,6 +78,11 @@ export const requestSong = command(requestSongSchema, async (params) => {
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(body)
 	});
+
+	if (!createRes.ok) {
+		const errorText = await createRes.text();
+		console.error('Error creating task:', errorText);
+	}
 
 	const result = await createRes.json() as RequestSongResponse;
 
@@ -73,9 +98,9 @@ export type QueryResultResponseAPI = {
 	code: number;
 	error: string | null;
 	timestamp: number;
-	extra: any | null;
+	extra: unknown;
 	data: TaskResultAPI[];
-}
+};
 
 type TaskResultAPI = {
 	task_id: string;
@@ -88,9 +113,9 @@ export type QueryResultResponse = {
 	code: number;
 	error: string | null;
 	timestamp: number;
-	extra: any | null;
+	extra: unknown;
 	data: TaskResult[];
-}
+};
 
 type TaskResult = {
 	task_id: string;
@@ -99,9 +124,6 @@ type TaskResult = {
 	progress_text: string;
 }
 
-
-// "[{\"file\": \"\", \"wave\": \"\", \"status\": 0, \"create_time\": 1770494902, \"env\": \"development\", \"prompt\": \"\", \"lyrics\": \"\", \"metas\": {}, \"error\": null}]",
-// "[{\"file\": \"/v1/audio?path=%2Fapp%2FACE-Step-1.5%2F.cache%2Facestep%2Ftmp%2Fapi_audio%2F07a529bd-189c-2ba3-ea0b-471790da75ab.mp3\", \"wave\": \"\", \"status\": 1, \"create_time\": 1770494902, \"env\": \"development\", \"prompt\": \"ds\", \"lyrics\": \"\", \"metas\": {\"bpm\": \"N/A\", \"duration\": 30.0, \"genres\": \"N/A\", \"keyscale\": \"N/A\", \"timesignature\": \"N/A\", \"prompt\": \"ds\", \"lyrics\": \"\"}, \"generation_info\": \"**🎯 Average Time per Track: 0.77s** (2 track(s))\\n\\n\\n**🎵 DiT Time:**\\n  - Encoder: 0.08s\\n  - VAE Decode: 0.77s\\n  - Offload: 1.57s\\n  - Total: 1.55s\\n\\n**🎵 Generation Complete**\\n  - **Seeds:** 4026912971,3129129321\\n  - **Steps:** 8\\n  - **Audio Count:** 2 audio(s)\\n\\n**⏱️ Total Time: 1.55s**\", \"seed_value\": \"4026912971,3129129321\", \"lm_model\": \"acestep-5Hz-lm-0.6B\", \"dit_model\": \"acestep-v15-turbo\"}, {\"file\": \"/v1/audio?path=%2Fapp%2FACE-Step-1.5%2F.cache%2Facestep%2Ftmp%2Fapi_audio%2F886ed5e0-5141-8631-2262-f259f84f3355.mp3\", \"wave\": \"\", \"status\": 1, \"create_time\": 1770494902, \"env\": \"development\", \"prompt\": \"ds\", \"lyrics\": \"\", \"metas\": {\"bpm\": \"N/A\", \"duration\": 30.0, \"genres\": \"N/A\", \"keyscale\": \"N/A\", \"timesignature\": \"N/A\", \"prompt\": \"ds\", \"lyrics\": \"\"}, \"generation_info\": \"**🎯 Average Time per Track: 0.77s** (2 track(s))\\n\\n\\n**🎵 DiT Time:**\\n  - Encoder: 0.08s\\n  - VAE Decode: 0.77s\\n  - Offload: 1.57s\\n  - Total: 1.55s\\n\\n**🎵 Generation Complete**\\n  - **Seeds:** 4026912971,3129129321\\n  - **Steps:** 8\\n  - **Audio Count:** 2 audio(s)\\n\\n**⏱️ Total Time: 1.55s**\", \"seed_value\": \"4026912971,3129129321\", \"lm_model\": \"acestep-5Hz-lm-0.6B\", \"dit_model\": \"acestep-v15-turbo\"}]",
 type TaskOutcome = {
 	file: string;
 	wave: string;
@@ -161,6 +183,7 @@ export const getSongFromUrl = command(getAudioSchema, async ({ url }) => {
 	}
 
 	const buffer = await res.arrayBuffer();
+	// Convert ArrayBuffer to base64 using Bun's Buffer (handles large files correctly)
 	const base64 = Buffer.from(buffer).toString('base64');
 	return { mimeType: res.headers.get('content-type') || 'audio/mpeg', base64 };
 });
